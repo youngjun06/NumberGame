@@ -24,6 +24,7 @@ else:
 
 number = random.randint(1, 100)
 try_num = 0
+# print("답: ", number)
 
 while True:
     try_num += 1
@@ -42,9 +43,10 @@ while True:
             hit = math.sqrt(number)
             print("힌트: ", hit)
 print(f"정답: {number}, 시도 횟수: {try_num}")
+print("-"*10)
 
-if try_num < top_score:
+if try_num <= top_score:
     print("최고 기록입니다!")
     data = [{"day": dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "score": try_num}]
     with open("score.json", "w", encoding="utf-8") as file:
-        json.dump(data, file, ensure_ascii=False, indent=2)
+        json.dump(data, file)
