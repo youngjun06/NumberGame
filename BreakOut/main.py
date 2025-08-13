@@ -1,43 +1,70 @@
 import pygame
 pygame.init()
 
-# Screen Setting
+# Screen setting
 width, height = 360, 640
 screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Brick Breaking Game")
+pygame.display.set_caption("Break Out")
 clock = pygame.time.Clock()
 
 # Font
-title_font = pygame.font.Font(None, 45)
-menu_font = pygame.font.Font(None, 30)
+title_font = pygame.font.SysFont("showcardgothic", 45, False, False)
+any_font = pygame.font.SysFont(None, 30, False, False)
+start_font = pygame.font.SysFont(None, 100)
 
-game_start = False
+# Button
+start_button = pygame.Rect(width // 2 - 80, height // 2, 160, 50)
+recode_button = pygame.Rect(width // 2 - 80, height // 2 + 80, 160, 50)
 
-# Game
+# Game loop
 running = True
+game_start = False
+recode_look = False
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.KEYDOWN and not game_start:
-            game_start = True
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if not game_start and start_button.collidepoint(event.pos):
+                game_start  = True
+            if not recode_look and recode_button.collidepoint(event.pos):
+                recode_look = True
     
+    # start
     screen.fill((250, 250, 250))
+
+    if recode_look:
+        # Click recode button
+        recode_text = title_font.render("Recode", True, (0, 0, 0))
+        recode_rect = recode_text.get_rect(center=(width // 2, 50))
+        screen.blit(recode_text, recode_rect)
     
-    if not game_start:
-        # 시작화면
-        title_text = title_font.render("<Brick Breaking Game>", True, (0, 0, 0))
-        title_rect = title_text.get_rect(center=(width // 2, height // 2 - 100))
+    elif not game_start:
+        # Title
+        title_text = title_font.render("<Break Out>", True, (0, 0, 0))
+        title_rect = title_text.get_rect(center=(width // 2, height // 2 - 180))
         screen.blit(title_text, title_rect)
 
-        menu_text = menu_font.render("Press any key to start", True, (128, 128, 128))
-        title_rect = menu_text.get_rect(center=(width // 2, height // 2 - 50))
-        screen.blit(menu_text, title_rect)
-    else:
-        # 게임 화면
-        game_text = title_font.render("START!!", True, (0, 0, 0))
-        game_rect = game_text.get_rect(center=(width // 2, height // 2 - 50))
+        # start button
+        pygame.draw.ellipse(screen, (255, 0, 0), start_button)
+        start_button_text = any_font.render("Start", True, (255, 255, 255))
+        start_button_rect = start_button_text.get_rect(center=(start_button.center))
+        screen.blit(start_button_text, start_button_rect)
+
+        # recode button
+        pygame.draw.ellipse(screen, (100, 100, 100), recode_button)
+        recode_button_text = any_font.render("Recode", True, (255, 255, 255))
+        recode_button_rect = recode_button_text.get_rect(center=(recode_button.center))
+        screen.blit(recode_button_text, recode_button_rect)
+
+    elif game_start: 
+        # Click start button
+        game_text = start_font.render("START", True, (150, 150, 150))
+        game_rect = game_text.get_rect(center=(width // 2, height // 2 - 70))
         screen.blit(game_text, game_rect)
+
+
+
 
     pygame.display.flip()
     clock.tick(60)
