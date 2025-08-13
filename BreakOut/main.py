@@ -1,4 +1,12 @@
+'''
+게임이 시작되면 위에서는 무작위로 블록 생성 한 줄, 바닥 가운데서 공 하나 생성
+공을 한번 쏘면 이전 블록은 한칸 내려오고, 상단에 새로운 블록 생성 점수 +1
+블록이 끝까지 내려오면 끝
+'''
+
 import pygame
+import random
+
 pygame.init()
 
 # Screen setting
@@ -18,8 +26,32 @@ recode_button = pygame.Rect(width // 2 - 80, height // 2 + 80, 160, 50)
 exit_button = pygame.Rect(width // 2 - 80, height // 2 + 160, 160, 50)
 back_button = pygame.Rect(width // 2 - 80, height // 2 + 160, 160, 50)
 
+# Default
 screen_state = "start"
 running = True
+game_start = False
+countdown = 3
+
+def ControlGame():
+    global screen_state, running
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if screen_state == "start":
+                if start_button.collidepoint(event.pos):
+                    screen_state = "game"
+                    
+
+                elif recode_button.collidepoint(event.pos):
+                    screen_state = "recode"
+                elif exit_button.collidepoint(event.pos):
+                    running = False
+            elif screen_state == "recode":
+                if back_button.collidepoint(event.pos):
+                    screen_state = "start"
+            # elif screen_state == "game":
+
 
 def StartScreen():
     screen.fill((250, 250, 250))
@@ -47,17 +79,25 @@ def StartScreen():
     screen.blit(exit_button_text, exit_button_rect)
 
 def GameScreen():
+    global game_start, countdown
     screen.fill((250, 250, 250))
     game_text = start_font.render("START", True, (150, 150, 150))
-    game_rect = game_text.get_rect(center=(width // 2, height // 2 - 70))
+    game_rect = game_text.get_rect(center=(width // 2, height // 2 - 130))
     screen.blit(game_text, game_rect)
 
+'''
+    if not game_start:
+        pygame.time.get.ticks()
+
+    else :
+        screen.fill((250, 250, 250))
+'''
 def RecodeScreen():
     screen.fill((250, 250, 250))
     recode_text = title_font.render("Recode", True, (0, 0, 0))
     recode_rect = recode_text.get_rect(center=(width // 2, 80))
     screen.blit(recode_text, recode_rect)
-    
+
     #Back Button
     pygame.draw.ellipse(screen, (50, 50, 50), back_button)
     exit_button_text = any_font.render("Back", True, (255, 255, 255))
@@ -65,27 +105,7 @@ def RecodeScreen():
     screen.blit(exit_button_text, exit_button_rect)
 
 
-def ControlGame():
-    global screen_state, running
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if screen_state == "start":
-                if start_button.collidepoint(event.pos):
-                    screen_state = "game"
-                elif recode_button.collidepoint(event.pos):
-                    screen_state = "recode"
-                elif exit_button.collidepoint(event.pos):
-                    running = False
-            elif screen_state == "recode":
-                if back_button.collidepoint(event.pos):
-                    screen_state = "start"
-            elif screen_state == "game":
-                if exit_button.collidepoint(event.pos):
-                    running = False
-
-# Game loop
+# Game
 while running:
     ControlGame()
     if screen_state == "start":
